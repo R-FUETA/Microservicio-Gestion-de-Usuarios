@@ -7,9 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-/**
- * Servicio para manejar la lógica de negocio de los usuarios.
- */
 @Service
 public class UsuarioService {
 
@@ -17,21 +14,20 @@ public class UsuarioService {
     private UsuarioRepository usuarioRepository;
 
     public Usuario crearUsuario(Usuario usuario) {
-        // En este caso, se guarda la contraseña tal cual (no recomendado en producción)
         return usuarioRepository.save(usuario);
     }
 
     public Usuario actualizarUsuario(Long id, Usuario usuario) {
-        Usuario existente = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-        existente.setNombre(usuario.getNombre());
-        existente.setCorreo(usuario.getCorreo());
-        existente.setContrasena(usuario.getContrasena());
-        existente.setRol(usuario.getRol());
-        existente.setActivo(usuario.isActivo());
-
-        return usuarioRepository.save(existente);
+        Usuario existente = usuarioRepository.findById(id).orElse(null);
+        if (existente != null) {
+            existente.setNombre(usuario.getNombre());
+            existente.setCorreo(usuario.getCorreo());
+            existente.setContrasena(usuario.getContrasena());
+            existente.setRol(usuario.getRol());
+            existente.setActivo(usuario.isActivo());
+            return usuarioRepository.save(existente);
+        }
+        return null;
     }
 
     public void eliminarUsuario(Long id) {
@@ -39,14 +35,31 @@ public class UsuarioService {
     }
 
     public Usuario obtenerPorId(Long id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuarioRepository.findById(id).orElse(null);
     }
 
     public List<Usuario> listarUsuarios() {
         return usuarioRepository.findAll();
     }
 
+    public Usuario autenticar(String correo, String contrasena) {
+    
+    Usuario usuario = usuarioRepository.findByCorreo(correo.trim());
+
+    if (usuario == null) {
+        System.out.println("Usuario no encontrado para correo: " + correo);
+        return null;
+    }
+
+    System.out.println("Usuario encontrado: " + usuario.getCorreo());
 
 
+    if (usuario.isActivo() && usuario.getContrasena().trim().equals(contrasena.trim())) {
+        return usuario;
+    }
+
+    return null;
+    }
+    
 }
+
