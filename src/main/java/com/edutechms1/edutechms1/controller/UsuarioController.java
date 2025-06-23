@@ -2,6 +2,10 @@ package com.edutechms1.edutechms1.controller;
 
 import com.edutechms1.edutechms1.model.Usuario;
 import com.edutechms1.edutechms1.service.UsuarioService;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/usuarios")
+@Tag(name = "Usuarios", description = ("Usuarios relacionados"))
 public class UsuarioController {
 
     @Autowired
@@ -37,6 +42,7 @@ public class UsuarioController {
     }
 
     @GetMapping
+    @Operation(summary = "Obtener todos los usuarios", description = "Obtiene una lista con todos los usuarios")
     public List<Usuario> listar() {
         return usuarioService.listarUsuarios();
     }
